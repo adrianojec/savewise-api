@@ -2,6 +2,31 @@
 
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
+
+  private
+
+  def respond_to(_resource, opts ={})
+    render json: {
+      message: "Successfully logged in.",
+      data: current_user
+    }, status: :ok
+  end
+
+  def log_out_success
+    render json: { message: 'You are logged out.' }, status: :ok
+  end
+
+  def log_out_failed
+    render json: { message 'Could not find an active sessions' }, status: :unauthorized
+  end
+
+  def respond_to_on_destroy
+    log_out_success && return if current_user
+
+    log_out_failed
+  end
+
+
   # before_action :configure_sign_in_params, only: [:create]
 
   # GET /resource/sign_in
