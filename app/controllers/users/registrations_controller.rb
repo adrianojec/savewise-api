@@ -13,13 +13,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def register_success
     render json: {
-      message: "Registered successfully.",
-      user: current_user
-    }, status: :ok
+      message: I18n.t('devise.registrations.signed_up'),
+      user: {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email
+      }
+    }, status: :created
   end
 
   def register_failed
-    render json: { message: "Something went wrong." }, status: :unprocessable_entity
+    render json: { message: I18n.t('devise.registrations.signed_up_failed') }, status: :unprocessable_entity
   end
 
 

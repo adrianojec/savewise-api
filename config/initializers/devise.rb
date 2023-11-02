@@ -16,7 +16,15 @@ Devise.setup do |config|
   # by default. You can change it below and use your own secret key.
   # config.secret_key = 'f41052b871f2a233c92d85a1018d676658256130e4d8e549831a8351ba4f26e58e8b81b922a7b1752e3912f634d1ef4b2574d0b35f69f0ae7580c65779217f24'
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise[:jwt_secret_key ]
+    jwt.secret = Rails.application.credentials.devise[:jwt_secret_key]
+    jwt.dispatch_requests = [
+      # add jwt header on user registration
+      ["POST", %r{^/users/signup$}],
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/users/logout$}]
+    ]
+    jwt.expiration_time = 2.weeks.to_i
   end
 
   # ==> Controller configuration

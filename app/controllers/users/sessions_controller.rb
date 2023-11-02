@@ -6,18 +6,20 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(_resource, _opts ={})
+    already_logged_in && return if user_signed_in?
+
     render json: {
-      message: "Successfully logged in.",
+      message: I18n.t('devise.sessions.signed_in'),
       data: current_user
     }, status: :ok
   end
 
   def log_out_success
-    render json: { message: 'You are logged out.' }, status: :ok
+    render json: { message: I18n.t('devise.sessions.signed_out'), }, status: :ok
   end
 
   def log_out_failed
-    render json: { message: 'Could not find an active sessions' }, status: :unauthorized
+    render json: { message: I18n.t('devise.sessions.no_session') }, status: :unauthorized
   end
 
   def respond_to_on_destroy
@@ -26,23 +28,9 @@ class Users::SessionsController < Devise::SessionsController
     log_out_failed
   end
 
-
-  # before_action :configure_sign_in_params, only: [:create]
-
-  # GET /resource/sign_in
-  # def new
-  #   super
-  # end
-
-  # POST /resource/sign_in
-  # def create
-  #   super
-  # end
-
-  # DELETE /resource/sign_out
-  # def destroy
-  #   super
-  # end
+  def already_logged_in
+    render json: { message: I18n.t('devise.failure.already_authenticated') }
+  end
 
   # protected
 
